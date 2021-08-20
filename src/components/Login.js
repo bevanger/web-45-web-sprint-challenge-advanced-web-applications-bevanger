@@ -1,17 +1,77 @@
-import React from "react";
+import axios from "axios";
+import React, { useState } from "react";
+import { useHistory } from "react-router";
 
-const Login = () => {
+
+const Login = (props) => {
   // make a post request to retrieve a token from the api
   // when you have handled the token, navigate to the BubblePage route
+ 
+  const [initialLogin, setInitialLogin] = useState({
+    username: "", 
+    password: "",
+  });
 
-  const error = "";
+  const [error, setError] = useState("");
+
+  const { push } = useHistory();
+
   //replace with error state
+  
+
+  const handleChange = (e) => {
+    setInitialLogin({
+      ...initialLogin,
+      [e.target.name]: e.target.value  
+    });
+  };
+
+  const login = e => {
+    e.preventDefault();
+
+    if(initialLogin.username === 'Lambda' && initialLogin.password === 'School') {
+      axios.post("http://localhost:5000/api/login", initialLogin)
+      .then(res => {
+        console.log("response", res)
+        localStorage.setItem('token', res.data.payload);
+        push('/bubble-page');
+      })
+      .catch(err => { 
+        console.log(err);
+      })
+    } else {
+      const newLogin  = { 
+        username: "", 
+        password: "",
+      }
+      setError("Username or Password not valid.")
+      return(setInitialLogin(newLogin));
+    }  
+  }
+
+  const {username, password} = initialLogin;
 
   return (
     <div>
       <h1>Welcome to the Bubble App!</h1>
       <div data-testid="loginForm" className="login-form">
-        <h2>Build login form here</h2>
+      <form onSubmit={login}>
+              <input
+                id="username"
+                type="text"
+                name="username"
+                value={username}
+                onChange={handleChange}
+              />
+              <input
+                id="password"
+                type="password"
+                name="password"
+                value={password}
+                onChange={handleChange}
+              />
+              <button id="submit">Log in</button>
+            </form>
       </div>
 
       <p id="error" className="error">{error}</p>
