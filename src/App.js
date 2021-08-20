@@ -7,12 +7,17 @@ import PrivateRoute from "./components/PrivateRoute";
 import "./styles.scss";
 
 function App() {
+
+  const logout = () => {
+    localStorage.removeItem("token");
+  }
+
   return (
     <Router>
       <div className="App">
         <header>
           Color Picker Sprint Challenge
-          <a data-testid="logoutButton" href="#">logout</a>
+          <a onClick={logout} data-testid="logoutButton" href="#">logout</a>
         </header>
         <Switch>
           <PrivateRoute path="/bubble-page" component={BubblePage}/>
